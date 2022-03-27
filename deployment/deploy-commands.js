@@ -2,7 +2,7 @@ const fs = require('fs');
 const { Client, Intents } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const env  = require("./config.js");
+const env  = require("../config.js");
 const { getEnabledCategories } = require('trace_events');
 
 
