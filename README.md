@@ -2,7 +2,7 @@
 
 This bot uses [MSCS](https://github.com/MinecraftServerControl/mscs/) to control multiple Minecraft servers (henceforth referred to as worlds) running on the same system via Discord using Slash commands.
 
-Currently, a Discord server has exactly one world attached to it, but a world can have multiple Discord servers. This might get changed in the future to allow a Discord server to control multiple worlds.
+One Discord server can have multiple worlds. Once that is the case, the world name must be supplied with the command (though there is autocompletion).
 
 ## Features
 - Starting, restarting or stopping a world
@@ -25,5 +25,6 @@ Currently, a Discord server has exactly one world attached to it, but a world ca
 - Create a Discord application and a bot for it
 - Edit the .env.example file with your IDs, tokens and world names, and rename it to .env
 - Run `node deployment/deploy-commands.js` once to register the Slash commands with Discord
-- Start the server as the user created by MSCS (default `minecraft`): `sudo -u minecraft index.js`
+  - This needs to be done every time a world or guild is added. If you want to be safe, run `node deployment/delete.js` first.
+- Start the server as the user created by MSCS (default `minecraft`): `sudo -u minecraft node index.js`
 - Optional: Use a Process Manager like `pm2` to keep the process running in the background
