@@ -39,7 +39,7 @@ module.exports = {
                 }
             }
             if(!found) {
-                out = "ERROR: Either this Discord guild doesn't have a server attached to it, or there is no world with the name you specified!"
+                out = "ERROR: Either this Discord guild doesn't have a server attached to it, or there is no world with the name you specified!" //TODO can we differentiate here?
                 env.logger.warn(`${interaction.user.username} requested to start a world from guild ${interaction.guild.name}, but no world was found for this guild!`);
                 return interaction.editReply(out);
             }

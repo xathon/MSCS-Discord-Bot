@@ -17,6 +17,7 @@ Currently, a Discord server has exactly one world attached to it, but a world ca
 - Expand locking to optionally work per-world
 - Tie the ability of using commands to having a role
 - Improved, more detailed and more verbose logs, split them per world
+- Add a 'sub'-mode that can be deployed on a remote server, controlled by the main node that runs the bot
 - ...
 
 ## Usage
