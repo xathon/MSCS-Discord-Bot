@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { stdout } = require('process');
 const env = require("../config.js");
-let worlds = env.worlds;
+let guilds = env.guilds;
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,24 +18,35 @@ module.exports = {
         var command = "";
 		var name = "";
 		let found = false;
-		for (let world of worlds) {
-			if(interaction.guild.id === world.guildID) {
-				//TODO here we can implement logic to check for the world name that can be passed as an argument in the slash command
-				//additionally, it might make sense to be able to start a world from different servers.
-				//this would be a restructure, since right now we have a 1:1 relation between worlds and servers.
-				//we would be converting guildID into an array and basically getting rid of guildName, it serves only informal purposes anyway
-				//but as I don't need that right now, I won't implement that (yet). but here's the place it would go
-				command = `${env.mscs} status ${world.worldName}`
-				env.logger.verbose(`Status command came from server ${world.guildName}.`);
-				name = world.worldName;
-				found = true;
-				break;
+		var worldName = "";
+
+		try {
+			worldName = interaction.options.getString('world');
+			for (let guild of guilds) {
+				if( guild.worlds.contains(worldName)) {
+					command = `${env.mscs} status ${worldName}`
+					env.logger.verbose(`Status command came from server ${guild.guildName} for world ${worldName}.`);
+					name = worldName;
+					found = true;
+					break;
+				}
+			}
+		} catch (error) {
+			env.logger.debug(`No world name was specified, so the server only has one world.`);
+			for (let guild of guilds) {
+				if( interaction.guild.id === guild.guildID) {
+					command = `${env.mscs} status ${guild.worlds[0]}`
+					env.logger.verbose(`Status command came from server ${guild.guildName} for world ${guild.worlds[0]}.`);
+					name = guild.worlds[0];
+					found = true;
+					break;
+				}
 			}
 		}
 		
 		if(!found) {
 			out = "ERROR: Either this Discord guild doesn't have a server attached to it, or there is no world with the name you specified!"
-			env.logger.warn(`${interaction.user.username} requested the status of a world from guild ${interaction.guild.name}, but no world was found for this guild!`);
+			env.logger.warn(`${interaction.user.username} requested the status of a world from guild ${interaction.guild.name}, but no world was found for this guild!`); //TODO error messages for the multiverse
 			return interaction.editReply(out);
 		}
 		

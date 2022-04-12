@@ -22,21 +22,31 @@ module.exports = {
         prefix = env.mscs_worlds;
         let found = false;
         var name = "";
+        var worldName = "";
 
-        for(let world of env.worlds) {
-            if(interaction.guild.id === world.guildID) {
-                //TODO here we can implement logic to check for the world name that can be passed as an argument in the slash command
-                //additionally, it might make sense to be able to start a world from different servers.
-                //this would be a restructure, since right now we have a 1:1 relation between worlds and servers.
-                //we would be converting guildID into an array and basically getting rid of guildName, it serves only informal purposes anyway
-                //but as I don't need that right now, I won't implement that (yet). but here's the place it would go
-                prefix += world.worldName + "/";
-                env.logger.verbose(`Logfile command came from server ${world.guildName}`);
-                name = world.worldName;
-                found = true;
-                break;
-            }
-        }
+		try {
+			worldName = interaction.options.getString('world');
+			for (let guild of guilds) {
+				if( guild.worlds.contains(worldName)) {
+                    prefix += worldName + "/";
+					env.logger.verbose(`Logfile command came from server ${guild.guildName} for world ${worldName}.`);
+					name = worldName;
+					found = true;
+					break;
+				}
+			}
+		} catch (error) {
+			env.logger.debug(`No world name was specified, so the server only has one world.`);
+			for (let guild of guilds) {
+				if( interaction.guild.id === guild.guildID) {
+					prefix += guild.worlds[0] + "/";
+					env.logger.verbose(`Logfile command came from server ${guild.guildName} for world ${guild.worlds[0]}.`);
+					name = guild.worlds[0];
+					found = true;
+					break;
+				}
+			}
+		}
         if(!found) {
             out = "ERROR: Either this Discord guild doesn't have a server attached to it, or there is no world with the name you specified!"
 			env.logger.warn(`${interaction.user.username} requested a logfile for a world from guild ${interaction.guild.name}, but no world was found for this guild!`);

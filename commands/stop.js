@@ -17,6 +17,33 @@ module.exports = {
         var command = "";
 		var name = "";
 		let found = false;
+		var worldName = "";
+
+            try {
+                worldName = interaction.options.getString('world');
+                for (let guild of guilds) {
+                    if( guild.worlds.contains(worldName)) {
+                        command = `${env.mscs} stop ${worldName}`;
+                        env.logger.verbose(`Stop command came from server ${guild.guildName} for world ${worldName}.`);
+                        name = worldName;
+                        found = true;
+                        break;
+                    }
+                }
+            } catch (error) {
+                env.logger.debug(`No world name was specified, so the server only has one world.`);
+                for (let guild of guilds) {
+                    if( interaction.guild.id === guild.guildID) {
+                        command = `${env.mscs} stop ${guild.worlds[0]}`;
+                        env.logger.verbose(`Stop command came from server ${guild.guildName} for world ${guild.worlds[0]}.`);
+                        name = guild.worlds[0];
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+
 		for(const world of env.worlds) {
 			if(interaction.guild.id === world.guildID) {
 				//TODO here we can implement logic to check for the world name that can be passed as an argument in the slash command
