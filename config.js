@@ -6,7 +6,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const { exec } = require('child_process');
 let running = false;
 const logger = require('./logger');
-const worlds = JSON.parse(process.env.MINECRAFT_WORLDS)
+const guilds = JSON.parse(process.env.GUILDS)
 
 module.exports =  {
     token: process.env.BOT_TOKEN,
@@ -14,7 +14,7 @@ module.exports =  {
     keyv: keyv,
     client: client,
     running: running,
-    worlds: worlds,
+    guilds: guilds,
     admins: process.env.ADMINS,
     mscs: process.env.MSCS_BIN,
     mscs_worlds: process.env.MSCS_WORLDS,
