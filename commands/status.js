@@ -49,8 +49,7 @@ module.exports = {
 			env.logger.warn(`${interaction.user.username} requested the status of a world from guild ${interaction.guild.name}, but no world was found for this guild!`); //TODO error messages for the multiverse
 			return interaction.editReply(out);
 		}
-		
-		env.logger.info(`Getting status of the world ${name}.`);
+	
 
 		require('child_process').exec(command, (err,stdout,stderr) => {
 			env.logger.info(`Sending status of the world ${name}.`)

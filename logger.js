@@ -48,7 +48,7 @@ module.exports = {
       log = log.slice(0,-2); //removes the last comma
     }
     */
-    log += ".";
+    //log += ".";
     return log;
   }
 };
