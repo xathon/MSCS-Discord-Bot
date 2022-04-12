@@ -6,11 +6,14 @@ const env = require("../config.js");
 
 const token = env.token;
 const clientId = env.client_id;
-    
+
 const rest = new REST({ version: '9' }).setToken(token);
-rest.get(Routes.applicationCommands(clientId))
-    .then(data => {
-        for (const command of data) {
-            console.log(command);
-        }
-    });
+for (let guild of env.guilds) {
+    console.log(guild.guildName + ": ");
+    rest.get(Routes.applicationGuildCommands(clientId, guild.guildID))
+        .then(data => {
+            for (const command of data) {
+                console.log(command);
+            }
+        });
+}
