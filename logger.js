@@ -35,7 +35,7 @@ var logger = winston.createLogger({
 
 module.exports = {
   'logger': logger,
-  commandUsed: function (user,commandName,guild) {
+  commandUsed: function (user, commandName, guild) {
     let log = `${user.username} used the command /${commandName} in guild "${guild.name}".`;
 
     /*

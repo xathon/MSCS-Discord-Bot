@@ -8,7 +8,7 @@ let running = false;
 const logger = require('./logger');
 const guilds = JSON.parse(process.env.GUILDS)
 
-module.exports =  {
+module.exports = {
     token: process.env.BOT_TOKEN,
     client_id: process.env.CLIENT_ID,
     keyv: keyv,
