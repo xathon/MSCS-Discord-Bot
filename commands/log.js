@@ -54,19 +54,20 @@ module.exports = {
     if (!command.endsWith('/')) command += '/'
 
     let found = false
-    var name = ''
-    var worldName = ''
+    var worldName, interactionWorldName, worldObj, remote, secret
 
     try {
-      worldName = interaction.options.getString('world')
+      interactionWorldName = interaction.options.getString('world')
       for (let guild of guilds) {
-        if (guild.worlds.contains(worldName)) {
-          command += worldName + '/' + file
+        if ((worldObj = env.getWorld(guild, interactionWorldName))) {
+          command += interactionWorldName + '/' + file
           env.logger.verbose(
-            `Log command came from server ${guild.guildName} for world ${worldName}.`
+            `Log command came from server ${guild.guildName} for world ${interactionWorldName}.`
           )
-          name = worldName
+          worldName = interactionWorldName
           found = true
+          remote = worldObj.remote
+          secret = worldObj.secret
           break
         }
       }
@@ -76,11 +77,11 @@ module.exports = {
       )
       for (let guild of guilds) {
         if (interaction.guild.id === guild.guildID) {
-          command += guild.worlds[0] + '/' + file
+          command += guild.worlds[0].name + '/' + file
           env.logger.verbose(
-            `Log command came from server ${guild.guildName} for world ${guild.worlds[0]}.`
+            `Log command came from server ${guild.guildName} for world ${guild.worlds[0].name}.`
           )
-          name = guild.worlds[0]
+          worldName = guild.worlds[0].name
           found = true
           break
         }
@@ -95,23 +96,49 @@ module.exports = {
       return interaction.editReply(out)
     }
 
-    var child = require('child_process').exec(command)
-
-    env.logger.verbose(`Getting log for server ${name}`)
-    child.stdout.on('data', function (data) {
-      out += data
-    })
-
-    child.on('exit', function () {
-      if (out.length() > 1942) {
-        //max length, because discord limits the reply to 2000 letters
-        out = out.slice(-1942)
-        env.logger.debug('Message had to be cropped!')
+    if (remote) {
+      if (remote.slice(-1) === '/') remote = remote.slice(0, -1)
+      let args = {
+        headers: { Authorization: secret }
       }
-      out = '```\n' + out
-      out += '\n```'
-      env.logger.info(`Sent log for server ${name}.`)
-      return interaction.editReply(out)
-    })
+      env.RESTClient.get(
+        `${remote}/log/${worldName}/${encodeURIComponent(file)}`,
+        args,
+        (data, response) => {
+          if (response.statusCode === 200) {
+            out = '```\n' + data.toString() + '\n```'
+            env.logger.info(`Sent log for remote server ${worldName}.`)
+            return interaction.editReply(out)
+          } else {
+            out = `ERROR: Could not get log for server ${worldName}!`
+            env.logger.error(
+              `Could not get log for remote server ${worldName}! Status code: ${
+                response.statusCode
+              }, message: ${data.toString()}`
+            )
+            return interaction.editReply(out)
+          }
+        }
+      )
+    } else {
+      var child = require('child_process').exec(command)
+
+      env.logger.verbose(`Getting log for server ${worldName}`)
+      child.stdout.on('data', function (data) {
+        out += data
+      })
+
+      child.on('exit', function () {
+        if (out.length() > 1942) {
+          //max length, because discord limits the reply to 2000 letters
+          out = out.slice(-1942)
+          env.logger.debug('Message had to be cropped!')
+        }
+        out = '```\n' + out
+        out += '\n```'
+        env.logger.info(`Sent log for server ${worldName}.`)
+        return interaction.editReply(out)
+      })
+    }
   }
 }
