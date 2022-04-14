@@ -1,8 +1,9 @@
 # Minecraft Server Control Discord Bot
 
+<a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=for-the-badge" alt="Standard - JavaScript Style Guide"></a> ![GitHub](https://img.shields.io/github/license/xathon/MSCS-Discord-Bot?style=for-the-badge) ![GitHub package.json version](https://img.shields.io/github/package-json/v/xathon/mscs-discord-bot?style=for-the-badge)
+
 This bot uses [MSCS](https://github.com/MinecraftServerControl/mscs/) to control multiple Minecraft servers (henceforth referred to as worlds) running on the same system via Discord using Slash commands.
 
-Currently, a Discord server has exactly one world attached to it, but a world can have multiple Discord servers. This might get changed in the future to allow a Discord server to control multiple worlds.
 
 ## Features
 - Starting, restarting or stopping a world
