@@ -4,7 +4,7 @@ const env = require("../config.js");
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('log')
-		.setDescription('Output the last n lines of the log (default 10, 0: max length). Choose console output or logfile.')
+		.setDescription('Output the last n lines of the log (default 10). Choose console output or logfile.')
         .addStringOption(option => option.setName('file').setDescription("Choose whether to print the console output or the logfile").setRequired(true).addChoice("console output","console.out").addChoice("logfile","logs/latest.log"))
         .addIntegerOption(option => option.setName('rows').setMinValue(0).setDescription("The number of rows to print (max 2000 characters, use /logfile for more)")),
 	async execute(interaction) {
@@ -19,14 +19,11 @@ module.exports = {
         out = "";
         numberRows = interaction.options.getInteger('rows');
         file = interaction.options.getString('file');
-        if(numberRows === 0) {
-            command = "tail -c 1942 ";
-            out = "Abridged log, use `/logasfile` for whole log!\n"
-        } else {
-            command = "tail -n "
-            if(!numberRows) numberRows = 10;
-            command += numberRows;
-        }
+
+        command = "tail -n "
+        numberRows ??= 10;
+        command += numberRows;
+
 
         command += " ";
         command += env.mscs_worlds;
